@@ -2,32 +2,26 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public class MyArr {
-    private int SIZE = 10;
+    private int SIZE = 1_000_000;
     private int[] arr;
 
-    public MyArr(){
-        arr = new int[(int)(SIZE)];
+    MyArr(){
+        arr = new int[SIZE];
     }
 
     public void view(){
         System.out.println(Arrays.toString(this.arr));
     }
 
-    public void fill(){
-        for (int j = 1; j<= this.arr.length; j++){
-            this.arr[j-1] = j;
-        }
-    }
-
-    public int getSIZE(){
+    private int getSIZE(){
         return this.SIZE;
     }
 
-    public void add(int i){
+    public void add(int i){ // используется для вставки в конец массива
         try{
             this.arr[SIZE] = i;
         } catch (ArrayIndexOutOfBoundsException e){
-            this.arr  = Arrays.copyOf(arr, (int) (arr.length * 1.3)); // увеличиваем размер с запасом
+            this.arr  = Arrays.copyOf(arr, (int) (arr.length * 1.4)); // увеличиваем размер с запасом
             this.arr[SIZE] = i;
         }
         finally {
@@ -35,7 +29,7 @@ public class MyArr {
         }
     }
 
-    public void add(int pos, int i){
+    public void add(int pos, int i){ // используется для вставки по индексу
         int[] tempArr = Arrays.copyOf(this.arr, this.SIZE++);
         this.arr = (int[]) Array.newInstance(this.arr.getClass().getComponentType(), SIZE);
         System.arraycopy(tempArr,0,this.arr,0,pos);
@@ -43,7 +37,7 @@ public class MyArr {
         System.arraycopy(tempArr,pos,this.arr,pos+1,tempArr.length-pos);
     }
 
-    public int findInChaos(int dest){
+    private int findInChaos(int dest){ // поиск со скоростью O(n)
         for(int i = 0; i < this.getSIZE(); i++){
             if (this.arr[i]== dest){
                 System.out.println("Мы нашли число по Вашему запросу. Оно расположено на позиции "+ i);
@@ -54,7 +48,7 @@ public class MyArr {
         return -1;
     }
 
-    public void remove(int dest){
+    public void remove(int dest){ // удаление элемента, скорость О(n); удаляет 1й встреченный элемент, если их несколько
         int temp = findInChaos(dest);
         if(temp == -1){
             System.out.println("Такого элемента не существует, поэтому его невозможно удалить.");
@@ -68,6 +62,62 @@ public class MyArr {
         }
     }
 
+    void fillRandom(){ // заполняет массив случайными числами
+        for (int i = 0; i < this.SIZE; i++) {
+            this.arr[i] = (int) (Math.random()*100);
+        }
+
+    }
+
+    void sortBubble() { // смещает самое большое число в конец за 1 итерацию
+        long time = System.currentTimeMillis();
+        int outer,inner;
+        for(outer = this.SIZE-1; outer>= 1 ; outer--){
+            for (inner = 0; inner < outer; inner++){
+                if (this.arr[inner] > this.arr[inner+1]){
+                    change(inner, inner+1);
+                }
+            }
+        }
+        System.out.println(System.currentTimeMillis()-time + " — время пузырьковой сортировки.");
+    }
+
+
+    public void sortSelect() { // смещает самое маленькое число в начало за 1 итерацию
+        long time = System.currentTimeMillis();
+        int outer, inner, mark;
+        for(outer = 0; outer< this.SIZE; outer++){
+            mark = outer;
+            for (inner = outer + 1; inner<this.SIZE; inner++){
+                if (this.arr[inner] < this.arr[mark]){
+                    mark = inner;
+                }
+            }
+            change(outer, mark);
+        }
+        System.out.println(System.currentTimeMillis() - time + " — время сортировки методом выбора.");
+    }
+
+    void sortInsert(){ // сортирует всё, что слева от текущего положения в цикле
+        long time = System.currentTimeMillis();
+        int inner, outer;
+        for (outer = 1; outer<this.SIZE; outer++){
+            int temp = this.arr[outer];
+            inner = outer;
+            while (inner > 0 && this.arr[inner - 1] >= temp) {
+                this.arr[inner] = this.arr[inner-1];
+                --inner;
+            }
+            this.arr[inner] = temp;
+        }
+        System.out.println(System.currentTimeMillis() - time + " — время сортировки методом вставки.");
+    }
+
+    private void change(int a, int b) {
+        int temp = this.arr[a];
+        this.arr[a] = this.arr[b];
+        this.arr[b] = temp;
+    }
 
 
 
