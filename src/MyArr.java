@@ -2,15 +2,15 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public class MyArr {
-    private int SIZE = 1_000_000;
+    private int SIZE = 10_000;
     private int[] arr;
 
     MyArr(){
         arr = new int[SIZE];
     }
 
-    public void view(){
-        System.out.println(Arrays.toString(this.arr));
+    void view(){
+        System.out.println(Arrays.toString(Arrays.copyOfRange(this.arr,0,SIZE)));
     }
 
     private int getSIZE(){
@@ -26,6 +26,7 @@ public class MyArr {
         }
         finally {
             SIZE++;
+            System.out.println("Добавлено число "+i);
         }
     }
 
@@ -35,9 +36,11 @@ public class MyArr {
         System.arraycopy(tempArr,0,this.arr,0,pos);
         this.arr[pos]=i;
         System.arraycopy(tempArr,pos,this.arr,pos+1,tempArr.length-pos);
+        System.out.printf("Добавлено число %d на позицию %d\n",i,pos);
+
     }
 
-    private int findInChaos(int dest){ // поиск со скоростью O(n)
+     int findInChaos(int dest){ // поиск со скоростью O(n)
         for(int i = 0; i < this.getSIZE(); i++){
             if (this.arr[i]== dest){
                 System.out.println("Мы нашли число по Вашему запросу. Оно расположено на позиции "+ i);
@@ -58,13 +61,14 @@ public class MyArr {
             this.arr = (int[]) Array.newInstance(this.arr.getClass().getComponentType(),this.arr.length-1);
             System.arraycopy(tempArr,0,this.arr,0,temp);
             System.arraycopy(tempArr,temp+1,this.arr,temp,tempArr.length-temp-1);
+            System.out.printf("Удалено число %d с позиции %d\n",dest,temp);
 
         }
     }
 
     void fillRandom(){ // заполняет массив случайными числами
         for (int i = 0; i < this.SIZE; i++) {
-            this.arr[i] = (int) (Math.random()*100);
+            this.arr[i] = (int) (Math.random()*1000);
         }
 
     }
